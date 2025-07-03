@@ -233,4 +233,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // Dark mode toggle
     darkModeToggle.addEventListener('click', () => {
         document.body.classList.toggle('dark');
-        if (document.body
+        if (document.body.classList.contains('dark')) {
+            localStorage.setItem('haqUtilityDarkMode', 'true');
+        } else {
+            localStorage.removeItem('haqUtilityDarkMode');
+        }
+    });
+
+    // Restore dark mode state on page load
+    if(localStorage.getItem('haqUtilityDarkMode') === 'true') {
+        document.body.classList.add('dark');
+    }
+});
