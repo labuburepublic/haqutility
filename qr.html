@@ -1,17 +1,51 @@
-
 <!DOCTYPE html>
 <html>
-<head><title>QR Code Generator</title></head>
-<body style="background:#111;color:white;text-align:center;">
-<h2>Enter Text</h2>
-<input id="text" oninput="genQR()">
-<br><br>
-<img id="qr" src="">
-<script>
-function genQR() {
-  let value = document.getElementById("text").value;
-  document.getElementById("qr").src = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" + encodeURIComponent(value);
-}
-</script>
+<head>
+  <title>QR Code Generator</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      background: #111;
+      color: white;
+      text-align: center;
+      font-family: Arial, sans-serif;
+    }
+    .qr-container {
+      padding: 20px;
+    }
+    input {
+      width: 300px;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: none;
+    }
+    img {
+      margin-top: 20px;
+      width: 150px;
+      height: 150px;
+      background: white;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="qr-container">
+    <h2>Enter Text to Generate QR Code</h2>
+    <input id="text" placeholder="Type something..." oninput="genQR()" />
+    <br />
+    <img id="qr" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Hello" alt="QR Code" />
+  </div>
+
+  <script>
+    function genQR() {
+      let value = document.getElementById("text").value.trim();
+      if (value) {
+        document.getElementById("qr").src = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" + encodeURIComponent(value);
+      } else {
+        document.getElementById("qr").src = "";
+      }
+    }
+  </script>
 </body>
-</html>
+  </html>
