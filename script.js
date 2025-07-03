@@ -211,3 +211,10 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.classList.add('dark');
     }
 });
+
+// Register service worker for PWA support
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js')
+        .then(() => console.log('HAQ Utility PWA: Service Worker registered.'))
+        .catch(err => console.error('SW registration failed:', err));
+                }
