@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Utility Tools</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="tab-container">
+        <button class="tab-button active" onclick="openTab(event, 'unit-converter')">Unit Converter</button>
+        <button class="tab-button" onclick="openTab(event, 'password-generator')">Password Generator</button>
+        <button class="tab-button" onclick="openTab(event, 'time-zone-converter')">Time Zone Converter</button>
+        <button class="tab-button" onclick="openTab(event, 'text-analysis')">Text Analysis</button>
+        <button class="tab-button" onclick="openTab(event, 'random-number-generator')">Random Number Generator</button>
+    </div>
+
+    <div id="unit-converter" class="tab-content" style="display:block;">
+        <h2>Unit Converter</h2>
+        <form>
+            <label for="length">Length:</label>
+            <select id="length" name="length">
+                <option value="meters">Meters</option>
+                <option value="feet">Feet</option>
+                <option value="inches">Inches</option>
+                <option value="centimeters">Centimeters</option>
+            </select>
+            <input type="number" id="length-value" placeholder="Enter value">
+            <button>Convert</button>
+        </form>
+    </div>
+
+    <div id="password-generator" class="tab-content">
+        <h2>Password Generator</h2>
+        <form>
+            <label for="password-length">Password Length:</label>
+            <input type="number" id="password-length" value="12">
+            <button>Generate Password</button>
+        </form>
+        <div id="generated-password"></div>
+    </div>
+
+    <div id="time-zone-converter" class="tab-content">
+        <h2>Time Zone Converter</h2>
+        <form>
+            <label for="time-zone">Time Zone:</label>
+            <select id="time-zone" name="time-zone">
+                <option value="New York">New York</option>
+                <option value="London">London</option>
+                <option value="Tokyo">Tokyo</option>
+                <option value="Sydney">Sydney</option>
+            </select>
+            <input type="time" id="time" value="12:00">
+            <button>Convert</button>
+        </form>
+        <div id="converted-time"></div>
+    </div>
+
+    <div id="text-analysis" class="tab-content">
+        <h2>Text Analysis</h2>
+        <textarea id="text" placeholder="Enter text"></textarea>
+        <button>Analyze</button>
+        <div id="word-count"></div>
+        <div id="character-count"></div>
+    </div>
+
+    <div id="random-number-generator" class="tab-content">
+        <h2>Random Number Generator</h2>
+        <form>
+            <label for="min">Min:</label>
+            <input type="number" id="min" value="1">
+            <label for="max">Max:</label>
+            <input type="number" id="max" value="1000">
+            <button>Generate</button>
+        </form>
+        <div id="random-number"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
