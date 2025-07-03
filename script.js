@@ -1,107 +1,236 @@
-// Tab Switching
-function openTab(evt, tabName) {
-    var i, tabcontent, tablinks;
-    tabcontent = document.getElementsByClassName("tab-content");
-    for (i = 0; i < tabcontent.length; i++) {
-        tabcontent[i].style.display = "none";
-    }
-    tablinks = document.getElementsByClassName("tab-button");
-    for (i = 0; i < tablinks.length; i++) {
-        tablinks[i].className = tablinks[i].className.replace(" active", "");
-    }
-    document.getElementById(tabName).style.display = "block";
-    evt.currentTarget.className += " active";
-}
+// HAQ Utility Tools
 
-// Password Generator
-function generatePassword() {
-    let dictionary = "";
-    if (document.getElementById("lowercaseCb") && document.getElementById("lowercaseCb").checked) {
-        dictionary += "qwertyuiopasdfghjklzxcvbnm";
-    }
-    if (document.getElementById("uppercaseCb") && document.getElementById("uppercaseCb").checked) {
-        dictionary += "QWERTYUIOPASDFGHJKLZXCVBNM";
-    }
-    if (document.getElementById("digitsCb") && document.getElementById("digitsCb").checked) {
-        dictionary += "1234567890";
-    }
-    if (document.getElementById("specialsCb") && document.getElementById("specialsCb").checked) {
-        dictionary += "!@#$%^&*()_+-={}[];<>:"; 
-    }
-    const length = document.querySelector('#password-generator input[type="range"]') ? document.querySelector('#password-generator input[type="range"]').value : 12;
-    if (length < 1 || dictionary.length === 0) {
-        return;
-    }
-    let password = "";
-    for (let i = 0; i < length; i++) {
-        const pos = Math.floor(Math.random() * dictionary.length);
-        password += dictionary[pos];
-    }
-    if (document.querySelector('#password-generator input[type="text"]')) {
-        document.querySelector('#password-generator input[type="text"]').value = password;
-    }
-}
+const tools = {
+    passwordGenerator: {
+        render: (container) => {
+            container.innerHTML = `
+                <h2>Password Generator</h2>
+                <p>Generate a random secure password</p>
+                <label>Length: <input type="number" id="pwLength" value="12" min="6" max="64"></label>
+                <button id="generatePw">Generate</button>
+                <textarea id="pwOutput" readonly rows="3" style="width:100%;margin-top:10px;"></textarea>
+            `;
+            const lengthInput = container.querySelector('#pwLength');
+            const generateBtn = container.querySelector('#generatePw');
+            const output = container.querySelector('#pwOutput');
 
-if (document.querySelector('#password-generator button')) {
-    document.querySelector('#password-generator button').addEventListener("click", function(event) {
-        event.preventDefault();
-        generatePassword();
+            function generatePassword(length) {
+                const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~`|}{[]:;?><,./-=";
+                let pw = '';
+                for(let i=0; i<length; i++) {
+                    pw += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                return pw;
+            }
+
+            generateBtn.addEventListener('click', () => {
+                let len = parseInt(lengthInput.value);
+                if(isNaN(len) || len < 6) len = 12;
+                output.value = generatePassword(len);
+            });
+        }
+    },
+    calculator: {
+        render: (container) => {
+            container.innerHTML = `
+                <h2>Simple Calculator</h2>
+                <input type="text" id="calcInput" readonly style="width:100%; font-size:1.2rem; margin-bottom:1rem; padding:8px;" />
+                <div class="calc-buttons" style="display:grid; grid-template-columns: repeat(4,1fr); gap:10px;">
+                    <button>7</button><button>8</button><button>9</button><button>/</button>
+                    <button>4</button><button>5</button><button>6</button><button>*</button>
+                    <button>1</button><button>2</button><button>3</button><button>-</button>
+                    <button>0</button><button>.</button><button>=</button><button>+</button>
+                    <button id="clearCalc" style="grid-column: span 4; background:#00796b; color:#fff;">Clear</button>
+                </div>
+            `;
+
+            const input = container.querySelector('#calcInput');
+            const buttons = container.querySelectorAll('.calc-buttons button');
+            buttons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if(btn.id === 'clearCalc') {
+                        input.value = '';
+                    } else if(btn.textContent === '=') {
+                        try {
+                            input.value = eval(input.value) || '';
+                        } catch {
+                            input.value = 'Error';
+                        }
+                    } else {
+                        input.value += btn.textContent;
+                    }
+                });
+            });
+        }
+    },
+    ageCalculator: {
+        render: (container) => {
+            container.innerHTML = `
+                <h2>Age Calculator</h2>
+                <label>Enter your birthdate: <input type="date" id="birthdate"></label>
+                <button id="calcAgeBtn">Calculate Age</button>
+                <p id="ageResult" style="margin-top:1rem; font-weight:bold;"></p>
+            `;
+            const birthdateInput = container.querySelector('#birthdate');
+            const calcBtn = container.querySelector('#calcAgeBtn');
+            const result = container.querySelector('#ageResult');
+
+            calcBtn.addEventListener('click', () => {
+                const birthdate = new Date(birthdateInput.value);
+                if(!birthdate.getTime()) {
+                    result.textContent = 'Please enter a valid birthdate.';
+                    return;
+                }
+                const now = new Date();
+                let age = now.getFullYear() - birthdate.getFullYear();
+                const m = now.getMonth() - birthdate.getMonth();
+                if(m < 0 || (m === 0 && now.getDate() < birthdate.getDate())) {
+                    age--;
+                }
+                result.textContent = `You are ${age} years old.`;
+            });
+        }
+    },
+    encoderDecoder: {
+        render: (container) => {
+            container.innerHTML = `
+                <h2>Text Encoder / Decoder</h2>
+                <textarea id="inputText" placeholder="Enter text here" rows="4" style="width:100%;"></textarea>
+                <div style="margin-top:1rem;">
+                    <button id="encodeBtn">Base64 Encode</button>
+                    <button id="decodeBtn">Base64 Decode</button>
+                </div>
+                <textarea id="outputText" readonly rows="4" style="width:100%; margin-top:1rem;"></textarea>
+            `;
+            const input = container.querySelector('#inputText');
+            const output = container.querySelector('#outputText');
+            const encodeBtn = container.querySelector('#encodeBtn');
+            const decodeBtn = container.querySelector('#decodeBtn');
+
+            encodeBtn.addEventListener('click', () => {
+                try {
+                    output.value = btoa(input.value);
+                } catch {
+                    output.value = 'Invalid input for encoding.';
+                }
+            });
+
+            decodeBtn.addEventListener('click', () => {
+                try {
+                    output.value = atob(input.value);
+                } catch {
+                    output.value = 'Invalid Base64 input for decoding.';
+                }
+            });
+        }
+    },
+    notepad: {
+        render: (container) => {
+            container.innerHTML = `
+                <h2>NotePad</h2>
+                <textarea id="notes" placeholder="Write your notes here..." rows="10" style="width:100%;"></textarea>
+                <button id="saveNotes" style="margin-top:1rem;">Save Notes</button>
+                <button id="clearNotes" style="margin-left:1rem;">Clear Notes</button>
+                <p id="saveStatus" style="margin-top:0.5rem;"></p>
+            `;
+            const notes = container.querySelector('#notes');
+            const saveBtn = container.querySelector('#saveNotes');
+            const clearBtn = container.querySelector('#clearNotes');
+            const status = container.querySelector('#saveStatus');
+
+            // Load saved notes
+            notes.value = localStorage.getItem('haqutility_notes') || '';
+
+            saveBtn.addEventListener('click', () => {
+                localStorage.setItem('haqutility_notes', notes.value);
+                status.textContent = 'Notes saved successfully.';
+                setTimeout(() => status.textContent = '', 2000);
+            });
+
+            clearBtn.addEventListener('click', () => {
+                notes.value = '';
+                localStorage.removeItem('haqutility_notes');
+                status.textContent = 'Notes cleared.';
+                setTimeout(() => status.textContent = '', 2000);
+            });
+        }
+    },
+    qrCodeGenerator: {
+        render: (container) => {
+            container.innerHTML = `
+                <h2>QR Code Generator</h2>
+                <label>Enter text or URL:</label>
+                <input type="text" id="qrInput" style="width:100%; padding:8px; margin-bottom:10px;" />
+                <button id="generateQrBtn">Generate QR Code</button>
+                <div id="qrCodeContainer" style="margin-top:20px; text-align:center;"></div>
+            `;
+
+            const qrInput = container.querySelector('#qrInput');
+            const generateBtn = container.querySelector('#generateQrBtn');
+            const qrCodeContainer = container.querySelector('#qrCodeContainer');
+
+            // Load QRCode library dynamically
+            function loadQRCodeLib(callback) {
+                if(window.QRCode) {
+                    callback();
+                    return;
+                }
+                const script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js';
+                script.onload = callback;
+                document.head.appendChild(script);
+            }
+
+            generateBtn.addEventListener('click', () => {
+                qrCodeContainer.innerHTML = '';
+                if (!qrInput.value.trim()) {
+                    qrCodeContainer.textContent = 'Please enter some text or URL.';
+                    return;
+                }
+                loadQRCodeLib(() => {
+                    new QRCode(qrCodeContainer, {
+                        text: qrInput.value,
+                        width: 180,
+                        height: 180,
+                        colorDark : "#004d40",
+                        colorLight : "#ffffff",
+                        correctLevel : QRCode.CorrectLevel.H
+                    });
+                });
+            });
+        }
+    }
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    const toolModal = document.getElementById('toolModal');
+    const toolContainer = document.getElementById('toolContainer');
+    const closeBtn = toolModal.querySelector('.close-btn');
+    const darkModeToggle = document.getElementById('darkModeToggle');
+
+    function openTool(name) {
+        toolContainer.innerHTML = '<p>Loading tool...</p>';
+        if(tools[name]) {
+            tools[name].render(toolContainer);
+        } else {
+            toolContainer.innerHTML = '<p>Tool not found.</p>';
+        }
+        toolModal.classList.remove('hidden');
+    }
+
+    document.querySelectorAll('.open-tool-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const toolName = btn.closest('.tool-card').dataset.tool;
+            openTool(toolName);
+        });
     });
-}
 
-// Time Zone Converter (Basic Example)
-function convertTime() {
-    const fromTimeZone = "UTC";
-    const toTimeZone = "America/New_York";
-    const time = new Date();
-
-    const options = {
-        timeZone: fromTimeZone,
-        hour12: false,
-        hour: '2-digit',
-        minute: '2-digit'
-    };
-
-    const fromTime = time.toLocaleTimeString('en-US', options);
-    const toTimeOptions = {
-        timeZone: toTimeZone,
-        hour12: false,
-        hour: '2-digit',
-        minute: '2-digit'
-    };
-    const toTime = time.toLocaleTimeString('en-US', toTimeOptions);
-
-    if (document.getElementById("converted-time")) {
-        document.getElementById("converted-time").innerHTML = `Converted Time: ${toTime}`;
-    }
-}
-
-if (document.querySelector('#time-zone-converter button')) {
-    document.querySelector('#time-zone-converter button').addEventListener("click", function(event) {
-        event.preventDefault();
-        convertTime();
+    closeBtn.addEventListener('click', () => {
+        toolModal.classList.add('hidden');
+        toolContainer.innerHTML = '';
     });
-}
 
-// Text Analysis
-function analyzeText() {
-    const text = document.getElementById("text") ? document.getElementById("text").value : "";
-    const wordCount = text.split(" ").length;
-    const characterCount = text.length;
-
-    if (document.getElementById("word-count")) {
-        document.getElementById("word-count").innerHTML = `Word Count: ${wordCount}`;
-    }
-    if (document.getElementById("character-count")) {
-        document.getElementById("character-count").innerHTML = `Character Count: ${characterCount}`;
-    }
-}
-
-if (document.querySelector('#text-analysis button')) {
-    document.querySelector('#text-analysis button').addEventListener("click", function(event) {
-        event.preventDefault();
-        analyzeText();
-    });
-}
-
-//
+    // Dark mode toggle
+    darkModeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark');
+        if (document.body
