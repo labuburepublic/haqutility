@@ -158,46 +158,12 @@ const tools = {
     qrCodeGenerator: {
         render: (container) => {
             container.innerHTML = `
-                <h2>QR Code Generator</h2>
-                <label>Enter text or URL:</label>
-                <input type="text" id="qrInput" style="width:100%; padding:8px; margin-bottom:10px;" />
-                <button id="generateQrBtn">Generate QR Code</button>
-                <div id="qrCodeContainer" style="margin-top:20px; text-align:center;"></div>
+                <iframe src="qr.html" 
+                        width="100%" 
+                        height="520px" 
+                        style="border:none; border-radius:12px;">
+                </iframe>
             `;
-
-            const qrInput = container.querySelector('#qrInput');
-            const generateBtn = container.querySelector('#generateQrBtn');
-            const qrCodeContainer = container.querySelector('#qrCodeContainer');
-
-            // Load QRCode library dynamically
-            function loadQRCodeLib(callback) {
-                if(window.QRCode) {
-                    callback();
-                    return;
-                }
-                const script = document.createElement('script');
-                script.src = 'https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js';
-                script.onload = callback;
-                document.head.appendChild(script);
-            }
-
-            generateBtn.addEventListener('click', () => {
-                qrCodeContainer.innerHTML = '';
-                if (!qrInput.value.trim()) {
-                    qrCodeContainer.textContent = 'Please enter some text or URL.';
-                    return;
-                }
-                loadQRCodeLib(() => {
-                    new QRCode(qrCodeContainer, {
-                        text: qrInput.value,
-                        width: 180,
-                        height: 180,
-                        colorDark : "#004d40",
-                        colorLight : "#ffffff",
-                        correctLevel : QRCode.CorrectLevel.H
-                    });
-                });
-            });
         }
     }
 };
