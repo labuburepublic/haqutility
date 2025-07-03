@@ -1,0 +1,17 @@
+
+<!DOCTYPE html>
+<html>
+<head><title>QR Code Generator</title></head>
+<body style="background:#111;color:white;text-align:center;">
+<h2>Enter Text</h2>
+<input id="text" oninput="genQR()">
+<br><br>
+<img id="qr" src="">
+<script>
+function genQR() {
+  let value = document.getElementById("text").value;
+  document.getElementById("qr").src = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" + encodeURIComponent(value);
+}
+</script>
+</body>
+</html>
